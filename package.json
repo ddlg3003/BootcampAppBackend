@@ -1,0 +1,20 @@
+{
+  "name": "bootcampapi",
+  "version": "1.0.0",
+  "description": "Bootcamp App backend API",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "set NODE_ENV=production&&node src/index",
+    "dev": "nodemon src/index"
+  },
+  "author": "Dang Nguyen",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

@@ -49,7 +49,7 @@ export const getBootcamps = asyncHandler(async (req, res, next) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    // Count all documents with query condition
+    // Count all documents with query (object query)
     const total = await Bootcamp.countDocuments(query);
 
     console.log(query)

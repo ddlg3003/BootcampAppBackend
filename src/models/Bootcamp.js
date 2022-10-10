@@ -143,8 +143,8 @@ Bootcamp.pre('remove', async function (next) {
 // Reverse populate with mongoose virtuals
 Bootcamp.virtual('courses', {
     ref: 'Course', 
-    localField: '_id', // The field of this document we want to 
-    foreignField: 'bootcamp', 
+    localField: '_id', // The field of this document we want to ref
+    foreignField: 'bootcamp', // The field of document that we ref has same value with localField
     justOne: false,
 });
 

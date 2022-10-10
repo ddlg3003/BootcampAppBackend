@@ -99,6 +99,10 @@ const Bootcamp = new mongoose.Schema({
     //   ref: 'User',
     //   required: true
     // }
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    id: false,
 });
 
 // Create Bootcamp slug from name
@@ -126,6 +130,22 @@ Bootcamp.pre('save', async function(next) {
     // Not save address in db cuz location has formattedAddress
     this.address = undefined;
     next();
+});
+
+// Cascade delete courses when a bootcamp is deleted
+Bootcamp.pre('remove', async function (next) {
+    // Model.model('Model1') method return the Model1
+    console.log(`Removing courses from bootcamp ${this._id}`);
+    await this.model('Course').deleteMany({ bootcamp: this._id });
+    next();
+});
+
+// Reverse populate with mongoose virtuals
+Bootcamp.virtual('courses', {
+    ref: 'Course', 
+    localField: '_id', // The field of this document we want to 
+    foreignField: 'bootcamp', 
+    justOne: false,
 });
 
 export default mongoose.model('Bootcamp', Bootcamp);

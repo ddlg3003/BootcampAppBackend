@@ -1,6 +1,7 @@
 import __ from './utils/env.js';
 import express from 'express';
 import bootcampsRoutes from './routes/bootcamps.js';
+import coursesRoutes from './routes/courses.js';
 import morgan from 'morgan';
 import connectDB from '../config/db.js';
 import errorHandler from './middleware/error.js';
@@ -20,6 +21,7 @@ if(process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/api/v1/bootcamps', bootcampsRoutes);
+app.use('/api/v1/courses', coursesRoutes);
 
 // Middleware to handle errors
 app.use(errorHandler);

@@ -1,3 +1,4 @@
+import path from 'path';
 import Bootcamp from '../models/Bootcamp.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import geocoder from '../utils/geocoder.js';
@@ -7,78 +8,7 @@ import asyncHandler from '../middleware/async.js';
 // @route   [GET] /api/v1/bootcamps
 // @access  Public
 export const getBootcamps = asyncHandler(async (req, res, next) => {
-    let query;
-
-    // Copy req.query to not to change the query
-    const reqQuery = { ...req.query };
-    
-    // Exclude fields when filtering with find() cuz they're not a field in db
-    const excludeFields = ['select', 'sort', 'page', 'limit'];
-    
-    excludeFields.forEach(field => delete reqQuery[field]);
-
-    // Create query string 
-    let queryStr = JSON.stringify(reqQuery);
-
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-    
-    // Find method to find the document with the specified condition
-    query = Bootcamp.find(JSON.parse(queryStr)).populate('courses', 'title tuition week');
-
-    // Select fields: mongoose needs a string of select fields seperated by spaces
-    if(req.query.select) {
-        const fields = req.query.select.split(',').join(' ');
-
-        // Select method of mongoose to get a certain fields of documents. E.g. select('name age') 
-        query = query.select(fields);
-    }
-
-    // Sort fields
-    if(req.query.sort) {
-        const sortBy = req.query.sort.split(',').join(' ');
-
-        // Sort fields ascending when not prefix with -
-        query = query.sort(sortBy);
-    } else {
-        // Sorted by create date descending by default
-        query = query.sort('-createdAt');
-    }
-
-    // Pagination
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    // Count all documents with query (object query)
-    const total = await Bootcamp.countDocuments(query);
-    
-    query = query.skip(startIndex).limit(limit);
-    
-    const bootcamps = await query;
-
-    // Pagination result
-    const pagination = {};
-
-    if(endIndex < total && Math.ceil(total / limit) >= page) {
-        pagination.next = {
-            page: page + 1,
-            limit,
-        }
-    }
-
-    if(startIndex > 0 && Math.ceil(total / limit) >= page) {
-        pagination.prev = {
-            page: page - 1,
-            limit,
-        }
-    }
-
-    res.status(200).json({
-        success: true,
-        total,
-        pagination,
-        data: bootcamps,
-    })
+    res.status(200).json(res.advancedResults);
 });
 
 // @desc    Get single bootcamp  
@@ -169,5 +99,51 @@ export const getBootcampsInRadius = asyncHandler(async (req, res, next) => {
         success: true,
         count: bootcamps.length,
         data: bootcamps
+    });
+});
+
+// @desc    Upload photo for bootcamp 
+// @route   [PUT] /api/v1/bootcamps/:id/photo
+// @access  Private
+export const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+
+    if(!bootcamp) {
+        return next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404));
+    }
+
+    if(!req.files) {
+        return next(new ErrorResponse(`Please upload a file`, 400));
+    }
+
+    const file = req.files.file;
+
+    // Check if the file is photo with startsWith string method
+    if(!file.mimetype.startsWith('image')) {
+        return next(new ErrorResponse('Please upload an image', 400)); 
+    }
+
+    // Check filesize
+    if(file.size > process.env.MAX_FILE_SIZE) {
+        return next(new ErrorResponse(`Please upload an image less than ${process.env.MAX_FILE_SIZE}`, 400)); 
+    }
+
+    // Create custom file name
+    file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+
+    // Upload file name to out path
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+        if(err) {
+            console.error(err);
+            return next(new ErrorResponse(`Problem with file upload`, 500));
+        }
+
+        await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+
+        // To access the photo from browser, go to /uploads/:imgName
+        res.status(200).json({
+            success: true,
+            data: file.name
+        });
     });
 });

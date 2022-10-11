@@ -9,6 +9,7 @@ import {
     bootcampPhotoUpload
 } from '../controllers/bootcamps.js';
 
+import { protect, authorize } from '../middleware/auth.js';
 import advancedResult from '../middleware/advancedResult.js';
 import Bootcamp from '../models/Bootcamp.js';
 
@@ -25,10 +26,14 @@ router.route('/radius/:zipcode/:distance', ).get(getBootcampsInRadius);
 
 router.route('/')
     .get(advancedResult(Bootcamp, { path: 'courses', select: 'title tuition description' }), getBootcamps)
-    .post(createBootcamp);
+    .post(protect, authorize('publisher', 'admin'), createBootcamp);
 
-router.route('/:id').get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp);
-router.route('/:id/photo').put(bootcampPhotoUpload);
+router.route('/:id')
+    .get(getBootcamp)
+    .put(protect, authorize('publisher', 'admin'), updateBootcamp)
+    .delete(protect, authorize('publisher', 'admin'), deleteBootcamp);
+
+router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), bootcampPhotoUpload);
 
 export default router;
 

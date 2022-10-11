@@ -2,9 +2,11 @@ import __ from './utils/env.js';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
 import fileupload from 'express-fileupload';
 import bootcampsRoutes from './routes/bootcamps.js';
 import coursesRoutes from './routes/courses.js';
+import authRoutes from './routes/auth.js';
 import morgan from 'morgan';
 import connectDB from '../config/db.js';
 import errorHandler from './middleware/error.js';
@@ -20,6 +22,9 @@ const __dirname = path.dirname(__filename);
 // Body parser
 app.use(express.json());
 
+// Cookie parser
+app.use(cookieParser());
+
 // Logging middleware
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
@@ -34,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api/v1/bootcamps', bootcampsRoutes);
 app.use('/api/v1/courses', coursesRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 // Middleware to handle errors
 app.use(errorHandler);

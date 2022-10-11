@@ -22,7 +22,7 @@ export const protect = asyncHandler(async (req, res, next) => {
         next();
     }
     catch(error) {
-        if(!token) return next(new ErrorResponse('Not authorize to access this route', 401));
+        return next(new ErrorResponse('Not authorize to access this route', 401));
     }
 });
 

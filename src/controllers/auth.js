@@ -10,7 +10,7 @@ import sendMail from '../utils/sendEmail.js';
 export const register = asyncHandler(async (req, res, next) => {
     const { name, email, password, role } = req.body;
 
-    const user = await User.create({name, email, password, role});
+    const user = await User.create({ name, email, password, role });
 
     sendTokenResponse(user, 200, res);
 });
@@ -51,7 +51,7 @@ export const getMe = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        data: user
+        data: user,
     });
 });
 
@@ -90,10 +90,10 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
         await sendMail({
             email: user.email,
             subject: 'Password reset token',
-            message
+            message,
         });
 
-        res.status(200).json({ success: true, data: 'Email sent' });
+        res.status(200).json({ success: true, data: 'Email sent', });
     }
     catch(error) {
         console.log(error);
@@ -128,7 +128,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
     await user.save();
 
-    res.status(200).json({ success: true, data: 'Password changed' });
+    res.status(200).json({ success: true, data: 'Password changed', });
 });
 
 // @desc    Update user detail
@@ -144,7 +144,7 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        data: user
+        data: user,
     });
 });
 
@@ -174,11 +174,11 @@ const sendTokenResponse = (user, statusCode, res) => {
     // cookie options
     const options = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
-        httpOnly: true
+        httpOnly: true,
     };
 
     res.status(statusCode).cookie('token', token, options).json({
         success: true,
-        token
+        token,
     });
 }

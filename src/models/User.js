@@ -7,30 +7,30 @@ import { userInfo } from 'os';
 const User = new mongoose.Schema({
     name: {
         type: String,
-        require: [true, 'Please add a name']
+        require: [true, 'Please add a name'],
     },
     email: {
         type: String, 
         require: [true, 'Please add a email'],
         unique: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email address']
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email address'],
     },
     role: {
         type: String,
         enum: ['user', 'publisher'],
-        default: 'user'
+        default: 'user',
     },
     password: {
         type: String,
         required: [true, 'Please add a password'],
         minlength: 6,
-        select: false // Not selected when get data
+        select: false, // Not selected when get data
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
     }
 });
 

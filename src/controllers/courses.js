@@ -14,7 +14,7 @@ export const getCourses = asyncHandler(async (req, res, next) => {
         return res.status(200).json({
             success: true,
             total: courses.length,
-            data: courses
+            data: courses,
         });
     }
     res.status(200).json(res.advancedResults);

@@ -23,7 +23,7 @@ export const getBootcamp = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        data: bootcamp
+        data: bootcamp,
     })
 });
 
@@ -44,7 +44,7 @@ export const createBootcamp = asyncHandler(async (req, res, next) => {
 
     res.status(201).json({
         success: true,
-        data: bootcamp
+        data: bootcamp,
     });
 });
 
@@ -68,12 +68,12 @@ export const updateBootcamp = asyncHandler(async (req, res, next) => {
 
     bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
-        runValidators: true // Check all validation in collection's fields (match, enum, required)
+        runValidators: true, // Check all validation in collection's fields (match, enum, required)
     });
 
     res.status(200).json({
         success: true,
-        data: bootcamp
+        data: bootcamp,
     })
 });
 
@@ -96,7 +96,7 @@ export const deleteBootcamp = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        data: {}
+        data: {},
     })
 });
 
@@ -122,7 +122,7 @@ export const getBootcampsInRadius = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         count: bootcamps.length,
-        data: bootcamps
+        data: bootcamps,
     });
 });
 
@@ -175,7 +175,7 @@ export const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
         // To access the photo from browser, go to /uploads/:imgName
         res.status(200).json({
             success: true,
-            data: file.name
+            data: file.name,
         });
     });
 });

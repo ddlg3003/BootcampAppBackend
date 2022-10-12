@@ -11,6 +11,7 @@
   "author": "Dang Nguyen",
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
@@ -20,6 +21,7 @@
     "mongoose": "^6.6.5",
     "morgan": "^1.10.0",
     "node-geocoder": "^4.2.0",
+    "nodemailer": "^6.8.0",
     "slugify": "^1.6.5"
   },
   "devDependencies": {

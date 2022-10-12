@@ -110,8 +110,8 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
 // @route   [PUT] /api/v1/auth/resetpassword/:resetToken
 // @access  Public
 export const resetPassword = asyncHandler(async (req, res, next) => {
-    // Get hashed token
-    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken.trim()).digest('hex');
+    // Get hashed token 
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
 
     console.log(req.params.resetToken);
 
@@ -130,6 +130,41 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({ success: true, data: 'Password changed' });
 });
+
+// @desc    Update user detail
+// @route   [PUT] /api/v1/auth/updateprofile
+// @access  Private
+export const updateProfile = asyncHandler(async (req, res, next) => {
+    const { name, email } = req.body;
+    
+    const user = await User.findByIdAndUpdate(req.user._id, { name, email }, {
+        runValidators: true,
+        new: true,
+    });
+
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});
+
+// @desc    Update password
+// @route   [PUT] /api/v1/auth/updatepassword
+// @access  Private
+export const updatePassword = asyncHandler(async (req, res, next) => {    
+    const user = await User.findById(req.user._id).select('+password');
+
+    if(!(await user.matchPassword(req.body.currentPassword))) {
+        return next(new ErrorResponse('Password is incorrect', 401))
+    }
+
+    user.password = req.body.newPassword;
+
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+});
+
 
 // Get token, create cookie
 const sendTokenResponse = (user, statusCode, res) => {

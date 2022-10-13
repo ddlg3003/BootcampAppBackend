@@ -9,6 +9,7 @@ import bootcampsRoutes from './routes/bootcamps.js';
 import coursesRoutes from './routes/courses.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import reviewsRoutes from './routes/reviews.js';
 
 import morgan from 'morgan';
 import connectDB from '../config/db.js';
@@ -44,6 +45,7 @@ app.use('/api/v1/bootcamps', bootcampsRoutes);
 app.use('/api/v1/courses', coursesRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/reviews', reviewsRoutes);
 
 // Middleware to handle errors
 app.use(errorHandler);

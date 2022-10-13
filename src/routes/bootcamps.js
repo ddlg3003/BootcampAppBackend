@@ -15,11 +15,13 @@ import Bootcamp from '../models/Bootcamp.js';
 
 // Import other router
 import coursesRoutes from './courses.js';
+import reviewsRoutes from './reviews.js';
 
 const router = express.Router();
 
 // Bound to courses routes
 router.use('/:bootcampId/courses', coursesRoutes);
+router.use('/:bootcampId/reviews', reviewsRoutes);
 
 // Bootcamp routes
 router.route('/radius/:zipcode/:distance', ).get(getBootcampsInRadius);

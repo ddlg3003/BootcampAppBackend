@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { userInfo } from 'os';
 
 const User = new mongoose.Schema({
     name: {

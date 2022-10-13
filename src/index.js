@@ -5,6 +5,13 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import fileupload from 'express-fileupload';
 
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit from 'express-rate-limit';
+import hpp from 'hpp';
+import helmet from 'helmet';
+import xss from 'xss-clean';
+import cors from 'cors';
+
 import bootcampsRoutes from './routes/bootcamps.js';
 import coursesRoutes from './routes/courses.js';
 import authRoutes from './routes/auth.js';
@@ -36,6 +43,29 @@ if(process.env.NODE_ENV === 'development') {
 
 // File upload
 app.use(fileupload());
+
+// Sanitize data
+app.use(mongoSanitize());
+
+// Set security headers
+app.use(helmet());
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Rating limiting
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 mins
+    max: 200,
+});
+
+app.use(limiter);
+
+// Http params pollution
+app.use(hpp());
+
+// Allow cross-side resources sharing
+app.use(cors());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
